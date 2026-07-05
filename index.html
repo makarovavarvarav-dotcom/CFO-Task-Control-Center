@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CFO Task Control Center</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-block">
+        <p class="system-label">CONTROL CENTER</p>
+        <h1>CFO Task Control Center</h1>
+      </div>
+      <div class="header-status" aria-label="Статус системы">
+        <span class="status-dot"></span>
+        <span>ONLINE</span>
+      </div>
+    </header>
+
+    <nav class="top-nav" aria-label="Основная навигация">
+      <button class="nav-tab is-active" type="button" data-screen="dashboard" aria-controls="dashboard-screen" aria-selected="true">
+        Дашборд
+      </button>
+      <button class="nav-tab" type="button" data-screen="tasks" aria-controls="tasks-screen" aria-selected="false">
+        Список задач
+      </button>
+      <button class="nav-tab" type="button" data-screen="kanban" aria-controls="kanban-screen" aria-selected="false">
+        Канбан
+      </button>
+      <button class="nav-tab" type="button" data-screen="matrix" aria-controls="matrix-screen" aria-selected="false">
+        Матрица
+      </button>
+      <button class="nav-tab" type="button" data-screen="risk" aria-controls="risk-screen" aria-selected="false">
+        Риск-карта
+      </button>
+      <button class="nav-tab" type="button" data-screen="journal" aria-controls="journal-screen" aria-selected="false">
+        Журнал/настройки
+      </button>
+      <button class="nav-tab" type="button" data-screen="manual" aria-controls="manual-screen" aria-selected="false">
+        Инструкция
+      </button>
+    </nav>
+
+    <main class="workspace">
+      <section class="screen is-active" id="dashboard-screen" data-screen="dashboard" aria-labelledby="dashboard-title">
+        <div class="screen-header">
+          <p class="section-code">DASHBOARD</p>
+          <h2 id="dashboard-title">Операционный обзор</h2>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card" data-metric="active">
+            <span class="metric-label">Активные задачи</span>
+            <strong>00</strong>
+            <span class="metric-note">статус не done</span>
+          </article>
+          <article class="metric-card" data-metric="today">
+            <span class="metric-label">На сегодня</span>
+            <strong>00</strong>
+            <span class="metric-note">дедлайн сегодня</span>
+          </article>
+          <article class="metric-card" data-metric="overdue">
+            <span class="metric-label">Просрочено</span>
+            <strong>00</strong>
+            <span class="metric-note">требует реакции</span>
+          </article>
+          <article class="metric-card" data-metric="risk">
+            <span class="metric-label">Риск/блокер</span>
+            <strong>00</strong>
+            <span class="metric-note">high, critical, blocked</span>
+          </article>
+          <article class="metric-card" data-metric="p1">
+            <span class="metric-label">Задачи P1</span>
+            <strong>00</strong>
+            <span class="metric-note">максимальный приоритет</span>
+          </article>
+          <article class="metric-card ceo-metric" data-metric="ceo">
+            <span class="metric-label">Фокус CEO</span>
+            <strong>00</strong>
+            <span class="metric-note">стратегический контроль</span>
+          </article>
+        </div>
+        <div class="dashboard-grid">
+          <section class="dashboard-panel today-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-code">TOP SCORE</p>
+                <h3>Что делать сегодня</h3>
+              </div>
+            </div>
+            <div class="priority-list" id="today-priority-list"></div>
+          </section>
+          <section class="dashboard-panel fire-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-code">OVERDUE</p>
+                <h3>Горит</h3>
+              </div>
+            </div>
+            <div class="priority-list" id="overdue-list"></div>
+          </section>
+          <section class="dashboard-panel ceo-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-code">CEO FOCUS</p>
+                <h3>Фокус CEO</h3>
+              </div>
+            </div>
+            <div class="priority-list" id="ceo-focus-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="tasks-screen" data-screen="tasks" aria-labelledby="tasks-title">
+        <div class="screen-header">
+          <div>
+            <p class="section-code">TASK LIST</p>
+            <h2 id="tasks-title">Список задач</h2>
+          </div>
+          <button class="action-button" id="create-task" type="button">
+            Создать задачу
+          </button>
+        </div>
+        <div class="task-toolbar" id="task-toolbar">
+          <div class="search-field">
+            <label for="task-search">Поиск</label>
+            <input id="task-search" type="search" placeholder="Название, описание, категория, владелец..." autocomplete="off">
+          </div>
+          <div class="filter-grid">
+            <label>
+              Статус
+              <select id="filter-status" data-filter="status">
+                <option value="">Все</option>
+              </select>
+            </label>
+            <label>
+              Категория
+              <select id="filter-category" data-filter="category">
+                <option value="">Все</option>
+              </select>
+            </label>
+            <label>
+              Приоритет
+              <select id="filter-priority" data-filter="priority">
+                <option value="">Все</option>
+              </select>
+            </label>
+            <label>
+              Тип
+              <select id="filter-task-type" data-filter="taskType">
+                <option value="">Все</option>
+              </select>
+            </label>
+            <label>
+              Риск
+              <select id="filter-risk" data-filter="riskLevel">
+                <option value="">Все</option>
+              </select>
+            </label>
+          </div>
+          <div class="quick-filter-row">
+            <label><input id="filter-overdue" type="checkbox" data-quick-filter="overdueOnly"> Только просроченные</label>
+            <label><input id="filter-today" type="checkbox" data-quick-filter="todayOnly"> Только на сегодня</label>
+            <label><input id="filter-ceo" type="checkbox" data-quick-filter="ceoOnly"> Только фокус CEO</label>
+            <label><input id="filter-delegated" type="checkbox" data-quick-filter="delegatedOnly"> Только делегированные</label>
+            <label><input id="filter-hide-done" type="checkbox" data-quick-filter="hideDone" checked> Скрыть завершенные</label>
+            <button class="compact-button" id="reset-task-filters" type="button">Сбросить все фильтры</button>
+          </div>
+        </div>
+        <div class="task-table-wrap">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Статус</th>
+                <th><button class="sort-button" type="button" data-sort-field="priority">Приоритет</button></th>
+                <th><button class="sort-button" type="button" data-sort-field="dueDate">Дедлайн</button></th>
+                <th>Срочность</th>
+                <th>Риск</th>
+                <th>Владелец</th>
+                <th>Делегат</th>
+                <th>Следующее действие</th>
+                <th>CEO-фокус</th>
+                <th><button class="sort-button" type="button" data-sort-field="updatedAt">Дата обновления</button></th>
+              </tr>
+            </thead>
+            <tbody id="task-table-body"></tbody>
+          </table>
+          <div class="empty-state" id="task-empty-state">
+            Задачи пока не созданы.
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="kanban-screen" data-screen="kanban" aria-labelledby="kanban-title">
+        <div class="screen-header">
+          <p class="section-code">KANBAN</p>
+          <h2 id="kanban-title">Канбан</h2>
+        </div>
+        <div class="kanban-board" id="kanban-board" aria-label="Канбан-доска задач">
+          <section class="kanban-column" data-kanban-status="backlog">
+            <header class="kanban-column-header">
+              <span>Бэклог</span>
+              <strong data-kanban-count="backlog">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="backlog"></div>
+          </section>
+          <section class="kanban-column" data-kanban-status="in_progress">
+            <header class="kanban-column-header">
+              <span>В работе</span>
+              <strong data-kanban-count="in_progress">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="in_progress"></div>
+          </section>
+          <section class="kanban-column" data-kanban-status="review">
+            <header class="kanban-column-header">
+              <span>На согласовании</span>
+              <strong data-kanban-count="review">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="review"></div>
+          </section>
+          <section class="kanban-column" data-kanban-status="waiting">
+            <header class="kanban-column-header">
+              <span>Ждет ответа</span>
+              <strong data-kanban-count="waiting">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="waiting"></div>
+          </section>
+          <section class="kanban-column" data-kanban-status="done">
+            <header class="kanban-column-header">
+              <span>Сделано</span>
+              <strong data-kanban-count="done">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="done"></div>
+          </section>
+          <section class="kanban-column" data-kanban-status="blocked">
+            <header class="kanban-column-header">
+              <span>Риск/блокер</span>
+              <strong data-kanban-count="blocked">0</strong>
+            </header>
+            <div class="kanban-dropzone" data-drop-status="blocked"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="matrix-screen" data-screen="matrix" aria-labelledby="matrix-title">
+        <div class="screen-header">
+          <p class="section-code">PRIORITY MATRIX</p>
+          <h2 id="matrix-title">Матрица</h2>
+        </div>
+        <div class="matrix-grid" id="priority-matrix">
+          <section class="matrix-quadrant quadrant-urgent-important" data-quadrant="q1">
+            <header>
+              <span>Квадрант 1</span>
+              <strong>Срочно и важно</strong>
+            </header>
+            <div class="analytics-list" data-matrix-list="q1"></div>
+          </section>
+          <section class="matrix-quadrant quadrant-important" data-quadrant="q2">
+            <header>
+              <span>Квадрант 2</span>
+              <strong>Важно, но не срочно</strong>
+            </header>
+            <div class="analytics-list" data-matrix-list="q2"></div>
+          </section>
+          <section class="matrix-quadrant quadrant-urgent" data-quadrant="q3">
+            <header>
+              <span>Квадрант 3</span>
+              <strong>Срочно, но менее важно</strong>
+            </header>
+            <div class="analytics-list" data-matrix-list="q3"></div>
+          </section>
+          <section class="matrix-quadrant quadrant-routine" data-quadrant="q4">
+            <header>
+              <span>Квадрант 4</span>
+              <strong>Не срочно и не важно</strong>
+            </header>
+            <div class="analytics-list" data-matrix-list="q4"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="risk-screen" data-screen="risk" aria-labelledby="risk-title">
+        <div class="screen-header">
+          <p class="section-code">RISK MAP</p>
+          <h2 id="risk-title">Риск-карта</h2>
+        </div>
+        <div class="risk-map-grid" id="risk-map">
+          <section class="risk-section" data-risk-type="none">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="none"></div>
+          </section>
+          <section class="risk-section" data-risk-type="tax">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="tax"></div>
+          </section>
+          <section class="risk-section" data-risk-type="legal">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="legal"></div>
+          </section>
+          <section class="risk-section" data-risk-type="operational">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="operational"></div>
+          </section>
+          <section class="risk-section" data-risk-type="financial">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="financial"></div>
+          </section>
+          <section class="risk-section" data-risk-type="customs">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="customs"></div>
+          </section>
+          <section class="risk-section" data-risk-type="warehouse">
+            <header class="risk-section-header"></header>
+            <div class="analytics-list" data-risk-list="warehouse"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="journal-screen" data-screen="journal" aria-labelledby="journal-title">
+        <div class="screen-header">
+          <p class="section-code">LOG / SETTINGS</p>
+          <h2 id="journal-title">Журнал/настройки</h2>
+        </div>
+        <div class="settings-panel">
+          <div>
+            <p class="panel-label">LOCAL STORAGE</p>
+            <p class="panel-copy">Создание демо-данных доступно только для пустой базы задач.</p>
+          </div>
+          <div class="settings-actions">
+            <button class="action-button" id="create-demo-data" type="button">
+              Создать демо-данные
+            </button>
+            <button class="compact-button" id="export-db" type="button">
+              Экспорт базы
+            </button>
+            <button class="compact-button" id="import-merge-db" type="button">
+              Импорт слиянием
+            </button>
+            <button class="danger-button" id="overwrite-db" type="button">
+              Полная перезапись базы
+            </button>
+            <input class="hidden-file-input" id="import-merge-file" type="file" accept="application/json,.json">
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="manual-screen" data-screen="manual" aria-labelledby="manual-title">
+        <div class="screen-header">
+          <div>
+            <p class="section-code">USER MANUAL</p>
+            <h2 id="manual-title">Инструкция к планировщику</h2>
+          </div>
+        </div>
+
+        <nav class="manual-nav" aria-label="Разделы инструкции">
+          <a class="compact-link" href="#manual-start">Старт</a>
+          <a class="compact-link" href="#manual-tasks">Задачи</a>
+          <a class="compact-link" href="#manual-dashboard">Дашборд</a>
+          <a class="compact-link" href="#manual-kanban">Канбан</a>
+          <a class="compact-link" href="#manual-analytics">Аналитика</a>
+          <a class="compact-link" href="#manual-backup">Резервные копии</a>
+        </nav>
+
+        <div class="manual-grid">
+          <section class="manual-section" id="manual-start">
+            <h2>Быстрый старт</h2>
+            <ol>
+              <li>Откройте `index.html` двойным кликом в браузере.</li>
+              <li>Перейдите во вкладку «Журнал/настройки».</li>
+              <li>Нажмите «Создать демо-данные», если база задач пустая.</li>
+              <li>Для рабочей эксплуатации создавайте задачи вручную через «Список задач».</li>
+            </ol>
+            <div class="manual-note">Приложение полностью локальное: база хранится в LocalStorage браузера под ключом `cfoTaskControlCenterDB`.</div>
+          </section>
+
+          <section class="manual-section" id="manual-tasks">
+            <h2>Создание и редактирование задач</h2>
+            <p>Во вкладке «Список задач» нажмите «Создать задачу». Заполните обязательные поля: название, категория, статус, приоритет и дедлайн.</p>
+            <h3>CEO-фокус</h3>
+            <p>Если задача отмечена как CEO-фокус, перенос дедлайна требует обязательную причину. Без причины сохранение будет заблокировано.</p>
+            <h3>Повторение</h3>
+            <p>Отметьте «Повторение» и выберите правило: ежедневно, еженедельно, ежемесячно, ежеквартально или ежегодно. При загрузке страницы система создаст один новый экземпляр без дублей.</p>
+          </section>
+
+          <section class="manual-section" id="manual-dashboard">
+            <h2>Дашборд дня</h2>
+            <ul>
+              <li>Верхние карточки показывают активные задачи, дедлайны на сегодня, просрочки, риски, P1 и CEO-фокус.</li>
+              <li>«Что делать сегодня» выводит до 5 задач с максимальным score.</li>
+              <li>«Горит» показывает просроченные задачи.</li>
+              <li>«Фокус CEO» собирает активные задачи с флагом CEO.</li>
+            </ul>
+          </section>
+
+          <section class="manual-section" id="manual-kanban">
+            <h2>Канбан</h2>
+            <p>Перетащите карточку между колонками. После сброса статус задачи меняется автоматически, дата обновления пересчитывается, а действие записывается в журнал.</p>
+            <p>Клик по карточке открывает форму редактирования.</p>
+          </section>
+
+          <section class="manual-section" id="manual-analytics">
+            <h2>Матрица и риск-карта</h2>
+            <h3>Матрица</h3>
+            <p>Матрица раскладывает активные задачи по четырем квадрантам на основе приоритета и срочности.</p>
+            <h3>Риск-карта</h3>
+            <p>Риск-карта группирует активные задачи по типу риска и показывает счетчики: всего, P1, просрочено, critical.</p>
+          </section>
+
+          <section class="manual-section" id="manual-backup">
+            <h2>Экспорт, импорт и восстановление</h2>
+            <ul>
+              <li>«Экспорт базы» скачивает полный JSON-бекап.</li>
+              <li>«Импорт слиянием» добавляет новые задачи и обновляет существующие только если импортная версия новее.</li>
+              <li>«Полная перезапись базы» требует точное контрольное слово `ПЕРЕЗАПИСАТЬ`.</li>
+            </ul>
+            <div class="manual-note">Перед полной перезаписью рекомендуется сделать экспорт текущей базы.</div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="critical-alert-root"></div>
+  <div id="toast-root"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
